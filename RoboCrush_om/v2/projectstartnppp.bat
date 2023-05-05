@@ -1,0 +1,1 @@
+start notepad++.exe "index.html" "tests.js" "game.js" "geom.js" "grafx.js" "button.js" "sound.js" "animloop.js" "player.js" "enemy.js" "bullet.js"

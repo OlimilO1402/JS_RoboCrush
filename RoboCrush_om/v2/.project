@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>RoboCrush_om</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>images/bg_sprite.png</name>
+			<type>1</type>
+			<location>C:/Users/Oliver Meyer/Documents/Aptana Studio 3 Workspace/RoboCrush_om/images/bg_sprite.png</location>
+		</link>
+		<link>
+			<name>images/main_sprite.png</name>
+			<type>1</type>
+			<location>C:/Users/Oliver Meyer/Documents/Aptana Studio 3 Workspace/RoboCrush_om/images/main_sprite.png</location>
+		</link>
+		<link>
+			<name>sounds/explosion.mp3</name>
+			<type>1</type>
+			<location>C:/Users/Oliver Meyer/Documents/Aptana Studio 3 Workspace/RoboCrush_om/sounds/explosion.mp3</location>
+		</link>
+	</linkedResources>
+</projectDescription>
