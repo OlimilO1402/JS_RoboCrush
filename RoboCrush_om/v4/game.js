@@ -17,10 +17,10 @@ var GGrpMenu;
 
 window.onload = function() 
 {
-    bCanvas = document.getElementById("Background");
+    bCanvas = document.getElementById("background_canvas");
     bContxt = bCanvas.getContext("2d");
-    pCanvas = document.getElementById("PaintCanvas");
-    pContxt = bCanvas.getContext("2d");
+    pCanvas = document.getElementById("main_canvas");
+    pContxt = pCanvas.getContext("2d");
     var imgBackgr = new GraphicImage("images/bg_sprite.png");
     var imgSprite = new GraphicImage("images/main_sprite.png");
     createMenu(imgBackgr, imgSprite, pCanvas);
@@ -45,7 +45,7 @@ function createMenu(imgBackgr, imgSprite, canvas)
     var rBtnSrcH = rBtnSrcN.copy().moveDxy(0, 50);
     var rBtnDst  = new AARect(Point.ORIGIN(), 200, 50);
     //rBtnSrcN.Point.moveDxy(0, 180);
-    rBtnDst.
+    //rBtnDst.
     rBtnDst.Point.move(rBgdSrc.midpoint()).moveDxy(-rBtnDst.Width/2, 200);
 
     //fontname, sizept, horalign, vertalign

@@ -10,277 +10,318 @@
 //diese Klasse bringt für alle Primitiven eine bestimmte Zeichenfunktion mit.
 //jede Primitive erhält ein Graphic-Element-Objekt das Stroke- und Fill-Objekte hält,
 //und die zur Primitive passende Zeichenfunktion bekommt.
-
-
-function GraphicElement(funcDraw, graphicObject, fillstyle, strokestyle)
+class GraphicElement
 {
-	this.FuncDraw = funcDraw;
-	this.GrObject = graphicObject;
-	this.FillStyle = fillstyle;
-	if (strokestyle === undefined && fillstyle === undefined) strokestyle = new Color(0,0,0); 
-	this.StrokeStyle = strokestyle;
-}
-GraphicElement.prototype.copy = function()
-{
-    //return new GraphicElement(this.FillColor, this.PenColor);
-};
-GraphicElement.prototype.draw = function(context)
-{
+	constructor(funcDraw, graphicObject, fillstyle, strokestyle)
+	{
+		this.FuncDraw = funcDraw;
+		this.GrObject = graphicObject;
+		this.FillStyle = fillstyle;
+		if (strokestyle === undefined && fillstyle === undefined) strokestyle = new Color(0,0,0); 
+		this.StrokeStyle = strokestyle;
+	}
 	
-};
-GraphicElement.prototype.moveDxy = function(dx, dy)
-{
-};
-//==================   GraphicGroup   ==================//
-function GraphicGroup()
-{
-	GraphicElement.call(this, undefined, undefined);
-	this.List = new Array();
+	copy()
+	{
+	    //return new GraphicElement(this.FillColor, this.PenColor);
+	}
+
+	draw(context)
+	{
+		//
+	}
+
+	moveDxy(dx, dy)
+	{
+		//
+	}
 }
-GraphicGroup.prototype = new GraphicElement();
-GraphicGroup.prototype.constructor = GraphicGroup;
-GraphicGroup.prototype.add = function(elem)
+
+//==================   GraphicGroup   ==================//
+class GraphicGroup extends GraphicElement
 {
-	this.List[this.List.length] = elem;
-	return elem;
-};
-GraphicGroup.prototype.copy = function()
-{
-    var ret = new GraphicGroup();
-    for (var ii = 0; ii < this.List.length; ii++)
-    {
-        ret.add(this.List[ii].copy());
-    }
-    return ret;
-};
-GraphicGroup.prototype.draw = function(context)
-{
-	for (ii = 0; ii < this.List.length; ii++)
+	constructor()
 	{
-		this.List[ii].draw(context);
+		GraphicElement.call(this, undefined, undefined);
+		this.List = new Array();
 	}
-};
-GraphicGroup.prototype.moveDxy = function(dx, dy)
-{
-	for (ii = 0; ii < this.List.length; ii++)
+	//GraphicGroup.prototype = new GraphicElement();
+	//GraphicGroup.prototype.constructor = GraphicGroup;
+	add(elem)
 	{
-		this.List[ii].moveDxy(dx, dy);
+		this.List[this.List.length] = elem;
+		return elem;
 	}
-};
+
+	copy()
+	{
+	    var ret = new GraphicGroup();
+	    for (var ii = 0; ii < this.List.length; ii++)
+	    {
+	        ret.add(this.List[ii].copy());
+	    }
+	    return ret;
+	}
+
+	draw(context)
+	{
+		for (ii = 0; ii < this.List.length; ii++)
+		{
+			this.List[ii].draw(context);
+		}
+	}
+
+	moveDxy(dx, dy)
+	{
+		for (ii = 0; ii < this.List.length; ii++)
+		{
+			this.List[ii].moveDxy(dx, dy);
+		}
+	}
+}
 
 //==================   GraphicCircle   ==================//
-function GraphicCircle(fillColor, penColor, circle)
+class GraphicCircle extends GraphicElement
 {
-	GraphicElement.call(this, fillColor, penColor);
-	this.Circle = circle;
+	constructor(fillColor, penColor, circle)
+	{
+		GraphicElement.call(this, fillColor, penColor);
+		this.Circle = circle;
+	}
+	//GraphicCircle.prototype = new GraphicElement();
+	//GraphicCircle.prototype.constructor = GraphicCircle;
+	copy()
+	{
+	    return new GraphicCircle(this.FillColor, this.PenColor, this.Circle.copy());
+	}
+	draw(context)
+	{
+		context.beginPath();
+		if (this.FillColor != undefined) 
+		{
+			context.fillStyle = this.FillColor;
+			context.arc(this.Circle.Center.X, this.Circle.Center.Y, this.Circle.Radius, 0, 2 * Math.PI);
+			context.fill();
+		}
+		context.beginPath();
+		if (this.PenColor != undefined) 
+		{
+			context.strokeStyle = this.PenColor;
+			context.arc(this.Circle.Center.X, this.Circle.Center.Y, this.Circle.Radius, 0, 2 * Math.PI);
+			context.stroke();
+		}
+	}
+	moveDxy(dx, dy)
+	{
+		this.Circle.Center.moveDxy(dx, dy);
+	}
 }
-GraphicCircle.prototype = new GraphicElement();
-GraphicCircle.prototype.constructor = GraphicCircle;
-GraphicCircle.prototype.copy = function()
-{
-    return new GraphicCircle(this.FillColor, this.PenColor, this.Circle.copy());
-};
-GraphicCircle.prototype.draw = function(context)
-{
-	context.beginPath();
-	if (this.FillColor != undefined) 
-	{
-		context.fillStyle = this.FillColor;
-		context.arc(this.Circle.Center.X, this.Circle.Center.Y, this.Circle.Radius, 0, 2 * Math.PI);
-		context.fill();
-	}
-	context.beginPath();
-	if (this.PenColor != undefined) 
-	{
-		context.strokeStyle = this.PenColor;
-		context.arc(this.Circle.Center.X, this.Circle.Center.Y, this.Circle.Radius, 0, 2 * Math.PI);
-		context.stroke();
-	}
-};
-GraphicCircle.prototype.moveDxy = function(dx, dy)
-{
-	this.Circle.Center.moveDxy(dx, dy);
-};
+
 
 //==================   GraphicPoint   ==================//
-function GraphicPoint(fillColor, penColor, point)
+class GraphicPoint extends GraphicElement
 {
-	GraphicElement.call(this, fillColor, penColor);
-	this.Point = point;
+	constructor(fillColor, penColor, point)
+	{
+		GraphicElement.call(this, fillColor, penColor);
+		this.Point = point;
+	}
+	//GraphicPoint.prototype = new GraphicElement();
+	//GraphicPoint.prototype.constructor = GraphicPoint;
+	copy()
+	{
+	    return new GraphicPoint(this.FillColor, this.PenColor, this.Point.copy());
+	}
+
+	draw(context)
+	{
+		var ccl = new Circle(this.Point, 2);
+		var GCl = new GraphicCircle(this.FillColor, this.PenColor, ccl);
+		GCl.draw(context);
+	}
+
+	moveDxy(dx, dy)
+	{
+		this.Point.moveDxy(dx, dy);
+	}
 }
-GraphicPoint.prototype = new GraphicElement();
-GraphicPoint.prototype.constructor = GraphicPoint;
-GraphicPoint.prototype.copy = function()
-{
-    return new GraphicPoint(this.FillColor, this.PenColor, this.Point.copy());
-};
-GraphicPoint.prototype.draw = function(context)
-{
-	var ccl = new Circle(this.Point, 2);
-	var GCl = new GraphicCircle(this.FillColor, this.PenColor, ccl);
-	GCl.draw(context);
-};
-GraphicPoint.prototype.moveDxy = function(dx, dy)
-{
-	this.Point.moveDxy(dx, dy);
-};
 
 //==================   GraphicAARect   ==================//
-function GraphicAARect(fillColor, penColor, aarect)
+class GraphicAARect extends GraphicElement
 {
-	GraphicElement.call(this, fillColor, penColor);
-	this.AARect = aarect;
+	constructor(fillColor, penColor, aarect)
+	{
+		GraphicElement.call(this, fillColor, penColor);
+		this.AARect = aarect;
+	}
+
+	copy()
+	{
+	    return new GraphicAARect(this.FillColor, this.PenColor, this.AARect.copy());
+	}
+
+	draw(context)
+	{
+		if (this.FillColor != undefined) 
+		{
+			context.fillStyle = this.FillColor;
+			context.fillRect(this.AARect.Point.X, this.AARect.Point.Y, this.AARect.Width, this.AARect.Height);
+		}
+		if (this.PenColor != undefined) 
+		{
+			context.strokeStyle = this.PenColor;
+			context.strokeRect(this.AARect.Point.X, this.AARect.Point.Y, this.AARect.Width, this.AARect.Height);
+		}
+	}
+
+	moveDxy(dx, dy)
+	{
+		this.AARect.Point.moveDxy(dx, dy);
+	}
 }
-GraphicAARect.prototype = new GraphicElement();
-GraphicAARect.prototype.constructor = GraphicAARect;
-GraphicAARect.prototype.copy = function()
-{
-    return new GraphicAARect(this.FillColor, this.PenColor, this.AARect.copy());
-};
-GraphicAARect.prototype.draw = function(context)
-{
-	if (this.FillColor != undefined) 
-	{
-		context.fillStyle = this.FillColor;
-		context.fillRect(this.AARect.Point.X, this.AARect.Point.Y, this.AARect.Width, this.AARect.Height);
-	}
-	if (this.PenColor != undefined) 
-	{
-		context.strokeStyle = this.PenColor;
-		context.strokeRect(this.AARect.Point.X, this.AARect.Point.Y, this.AARect.Width, this.AARect.Height);
-	}
-};
-GraphicAARect.prototype.moveDxy = function(dx, dy)
-{
-	this.AARect.Point.moveDxy(dx, dy);
-};
 //==================   GraphicImage   ==================//
-function GraphicImage(path)
+class GraphicImage
 {
-	this.Image = new Image();
-	this.Image.src = path;
+	constructor(path)
+	{
+		this.Image = new Image();
+		this.Image.src = path;
+	}
 }
 //==================   GraphicPicture   ==================//
-function GraphicPicture(graphicimage, aarectSrc, aarectDst)
+class GraphicPicture extends GraphicElement
 {
-	GraphicElement.call(this, undefined, undefined);
-	this.GraphicImage = graphicimage;
-	this.AARectSrc = aarectSrc;
-	this.AARectDst = aarectDst;
-	this.tmpctx = undefined;
+	constructor(graphicimage, aarectSrc, aarectDst)
+	{
+		GraphicElement.call(this, undefined, undefined);
+		this.GraphicImage = graphicimage;
+		this.AARectSrc = aarectSrc;
+		this.AARectDst = aarectDst;
+		this.tmpctx = undefined;
+	}
+
+	copy()
+	{
+	    return new GraphicPicture(this.GraphicImage, this.AARectSrc.copy(), this.AARectDst.copy());
+	}
+
+	draw(context)
+	{
+		this.tmpctx = context; //for getpixel
+		context.drawImage(this.GraphicImage.Image, 
+		this.AARectSrc.Point.X, this.AARectSrc.Point.Y, this.AARectSrc.Width, this.AARectSrc.Height,
+		this.AARectDst.Point.X, this.AARectDst.Point.Y, this.AARectDst.Width, this.AARectDst.Height);	
+	}
+
+	moveDxy(dx, dy)
+	{
+		this.AARectDst.Point.moveDxy(dx, dy);
+	}
+
+	getPixel(x, y)
+	{
+		if (this.tmpctx == undefined) return null;
+		return Color.fromPixel(this.tmpctx, x, y);
+		//this.AARectDst.Point.moveDxy(dx, dy);
+		//return Color.fromInt(this.GraphicImage.Image.)
+		//context.getImageData(x, y, 1, 1)).data
+		//data[0] = r
+		//data[1] = g
+		//data[2] = b
+		//data[3] = a		
+	}
 }
-GraphicPicture.prototype = new GraphicElement();
-GraphicPicture.prototype.constructor = GraphicPicture;
-GraphicPicture.prototype.copy = function()
+
+//==================   GraphicFont   ==================//
+class GraphicFont
 {
-    return new GraphicPicture(this.GraphicImage, this.AARectSrc.copy(), this.AARectDst.copy());
-};
-GraphicPicture.prototype.draw = function(context)
-{
-	this.tmpctx = context; //for getpixel
-	context.drawImage(this.GraphicImage.Image, 
-	this.AARectSrc.Point.X, this.AARectSrc.Point.Y, this.AARectSrc.Width, this.AARectSrc.Height,
-	this.AARectDst.Point.X, this.AARectDst.Point.Y, this.AARectDst.Width, this.AARectDst.Height);	
-};
-GraphicPicture.prototype.moveDxy = function(dx, dy)
-{
-	this.AARectDst.Point.moveDxy(dx, dy);
-};
-GraphicPicture.prototype.getPixel = function(x, y)
-{
-	if (this.tmpctx == undefined) return null;
-	return Color.fromPixel(this.tmpctx, x, y);
-	//this.AARectDst.Point.moveDxy(dx, dy);
-	//return Color.fromInt(this.GraphicImage.Image.)
-	//context.getImageData(x, y, 1, 1)).data
-	//data[0] = r
-	//data[1] = g
-	//data[2] = b
-	//data[3] = a
-	
-};
+	constructor(fontname, sizept, horalign, vertalign)
+	{
+		this.FontName = fontname;
+		this.SizePt = sizept;
+		this.HorAlign = horalign;   //"left", "center", "right"
+		this.VertAlign = vertalign; //"top", "middle", "bottom"
+	}
+
+	copy()
+	{
+	    return new GraphicFont(this.FontName, this.SizePt, this.HorAlign, this.VertAlign);
+	}
+
+	draw(context)
+	{
+		context.font = this.SizePt + "px " + this.FontName;
+		context.textAlign = this.HorAlign;
+		context.textBaseline = this.VertAlign;
+	}
+}
 
 //==================   GraphicText   ==================//
-function GraphicFont(fontname, sizept, horalign, vertalign)
+class GraphicText extends GraphicElement
 {
-	this.FontName = fontname;
-	this.SizePt = sizept;
-	this.HorAlign = horalign;   //"left", "center", "right"
-	this.VertAlign = vertalign; //"top", "middle", "bottom"
-}
-GraphicFont.prototype.copy = function()
-{
-    return new GraphicFont(this.FontName, this.SizePt, this.HorAlign, this.VertAlign);
-};
-GraphicFont.prototype.draw = function(context)
-{
-	context.font = this.SizePt + "px " + this.FontName;
-	context.textAlign = this.HorAlign;
-	context.textBaseline = this.VertAlign;
-};
-//==================   GraphicText   ==================//
-function GraphicText(fillColor, penColor, text, gfont, point)
-{
-	GraphicElement.call(this, fillColor, penColor);
-	this.Text = text;
-	this.Font = gfont;
-	this.Point = point;
-}
-GraphicText.prototype = new GraphicElement();
-GraphicText.prototype.constructor = GraphicText;
-GraphicText.prototype.copy = function()
-{
-    return new GraphicText(this.FillColor, this.PenColor, this.Text, this.Font.copy(), this.Point.copy());
-};
-GraphicText.prototype.draw = function(context)
-{
-	this.Font.draw(context);
-	context.fillStyle = this.FillColor;
-	context.strokeStyle = this.PenColor;
-	context.fillText(this.Text, this.Point.X, this.Point.Y);
-};
-GraphicText.prototype.moveDxy = function(dx, dy)
-{
-	this.Point.moveDxy(dx, dy);
-};
+	constructor(fillColor, penColor, text, gfont, point)
+	{
+		GraphicElement.call(this, fillColor, penColor);
+		this.Text = text;
+		this.Font = gfont;
+		this.Point = point;
+	}
 
+	copy()
+	{
+	    return new GraphicText(this.FillColor, this.PenColor, this.Text, this.Font.copy(), this.Point.copy());
+	}
 
-
-
-
-
-function Graphics2d(canvasID)
-{
-	var cnv = document.getElementById(canvasID);
-	this.Ctx = cnv.getContext("2d");
-}
-Graphics2d.prototype.DrawElement = function(graphicelement)
-{
-	return ;
-};
-Graphics2d.prototype.drawCircleFill = function(circle)
-{
-//	if (this.FillColor != undefined) 
-//	{
-	this.Ctx.beginPath();
-	//context.fillStyle = this.FillColor;
-	this.Ctx.arc(circle.Center.X, circle.Center.Y, circle.Radius, 0, 2 * Math.PI);
-	this.Ctx.fill();
-//	}
-//	if (this.PenColor != undefined) 
-//	{
+	draw(context)
+	{
+		this.Font.draw(context);
+		context.fillStyle = this.FillColor;
 		context.strokeStyle = this.PenColor;
-//	}
+		context.fillText(this.Text, this.Point.X, this.Point.Y);
+	}
+	
+	moveDxy(dx, dy)
+	{
+		this.Point.moveDxy(dx, dy);
+	}	
+}
 
-};
-Graphics2d.prototype.drawCircleStroke = function(circle)
+//==================   Graphics2d   ==================//
+class Graphics2d
 {
-	this.Ctx.beginPath();
-	this.Ctx.arc(circle.Center.X, circle.Center.Y, circle.Radius, 0, 2 * Math.PI);
-	this.Ctx.stroke();
-};
-Graphics2d.prototype.drawPoint = function(point)
-{
-	this.Ctx.arc();
-};
+	constructor(canvasID)
+	{
+		var cnv = document.getElementById(canvasID);
+		this.Ctx = cnv.getContext("2d");
+	}
+	DrawElement(graphicelement)
+	{
+		return ;
+	}
+	drawCircleFill(circle)
+	{
+	//	if (this.FillColor != undefined) 
+	//	{
+		this.Ctx.beginPath();
+		//context.fillStyle = this.FillColor;
+		this.Ctx.arc(circle.Center.X, circle.Center.Y, circle.Radius, 0, 2 * Math.PI);
+		this.Ctx.fill();
+	//	}
+	//	if (this.PenColor != undefined) 
+	//	{
+			context.strokeStyle = this.PenColor;
+	//	}
+
+	}
+	drawCircleStroke(circle)
+	{
+		this.Ctx.beginPath();
+		this.Ctx.arc(circle.Center.X, circle.Center.Y, circle.Radius, 0, 2 * Math.PI);
+		this.Ctx.stroke();
+	}
+	drawPoint(point)
+	{
+		this.Ctx.arc();
+	};
+}
 
